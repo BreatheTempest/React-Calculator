@@ -1,5 +1,6 @@
 import DigitButton from './DigitButton';
 import OperationButton from './OperationButton';
+import backspaceIcon from './icons/backspace.svg';
 import { useReducer } from 'react';
 
 export const ACTIONS = {
@@ -40,7 +41,9 @@ function reducer(state, { type, payload }) {
 				currentOperand: `${state.currentOperand || ''}${payload.digit}`,
 			};
 		case ACTIONS.CLEAR:
-			return {};
+			return {
+				currentOperand: '0',
+			};
 		case ACTIONS.CHOOSE_OPERATION:
 			if (state.currentOperand == null && state.previousOperand == null)
 				return state;
@@ -93,7 +96,7 @@ function reducer(state, { type, payload }) {
 			if (state.currentOperand.length === 1)
 				return {
 					...state,
-					currentOperand: null,
+					currentOperand: '0',
 				};
 			return {
 				...state,
@@ -116,7 +119,7 @@ function evaluate({ currentOperand, previousOperand, operation }) {
 		case '+':
 			computation = prev + current;
 			break;
-		case '*':
+		case 'x':
 			computation = prev * current;
 			break;
 		case '-':
@@ -154,7 +157,7 @@ function App() {
 				<div className="current-operand">{formatOperand(currentOperand)}</div>
 			</div>
 			<button
-				className="span-two"
+				className="span-two operand"
 				onClick={() =>
 					dispatch({
 						type: ACTIONS.CLEAR,
@@ -164,19 +167,20 @@ function App() {
 				AC
 			</button>
 			<button
+				className="operand backspace"
 				onClick={() =>
 					dispatch({
 						type: ACTIONS.DELETE_DIGIT,
 					})
 				}
 			>
-				DEL
+				<img src={backspaceIcon} alt="" />
 			</button>
 			<OperationButton operation="÷" dispatch={dispatch} />
 			<DigitButton digit="1" dispatch={dispatch} />
 			<DigitButton digit="2" dispatch={dispatch} />
 			<DigitButton digit="3" dispatch={dispatch} />
-			<OperationButton operation="*" dispatch={dispatch} />
+			<OperationButton operation="x" dispatch={dispatch} />
 			<DigitButton digit="4" dispatch={dispatch} />
 			<DigitButton digit="5" dispatch={dispatch} />
 			<DigitButton digit="6" dispatch={dispatch} />
@@ -188,7 +192,7 @@ function App() {
 			<DigitButton digit="." dispatch={dispatch} />
 			<DigitButton digit="0" dispatch={dispatch} />
 			<button
-				className="span-two"
+				className="span-two evaluate"
 				onClick={() =>
 					dispatch({
 						type: ACTIONS.EVALUATE,
